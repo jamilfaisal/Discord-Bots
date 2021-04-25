@@ -1,6 +1,7 @@
 import typing
 import discord
 from discord.ext import commands
+import aiohttp
 
 
 bot_description = ""
@@ -22,3 +23,12 @@ async def add(ctx: commands.Context, left: int, right: int):
 async def add_error(ctx: commands.Context, error: commands.CommandError):
     if isinstance(error, commands.BadArgument):
         return await ctx.send("Invalid arguments!")
+
+
+@DerbyBot.command()
+async def cat(ctx: commands.Context):
+    async with aiohttp.ClientSession() as session:
+        async with session.get('http://aws.random.cat/meow') as r:
+            if r.status == 200:
+                js = await r.json()
+                await ctx.send(js['file'])
