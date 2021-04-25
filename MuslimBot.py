@@ -24,7 +24,10 @@ async def athan(ctx: commands.Context, city: str="Toronto", country: str="Canada
                 if r.status == 200:
                     js = await r.json()
                     await ctx.send(format_athan(js))
-        except Exception as e:
+        except aiohttp.ServerDisconnectedError as e:
+            print(e)
+            continue
+        except aiohttp.ClientOSError as e:
             print(e)
             continue
         break
@@ -34,18 +37,19 @@ async def athan(ctx: commands.Context, city: str="Toronto", country: str="Canada
 def format_athan(json):
     date_format = datetime.today().strftime('%d-%m-%Y')
     timings = json["data"]["timings"]
-    result = """Athan for {}
-                        Fajr: {}
-                        Sunrise: {}
-                        Dhuhr: {}
-                        Asr: {}
-                        Maghrib: {}
-                        Isha: {}
-                        """.format(date_format,
-                                   timings["Fajr"],
-                                   timings["Sunrise"],
-                                   timings["Dhuhr"],
-                                   timings["Asr"],
-                                   timings["Maghrib"],
-                                   timings["Isha"])
+    result = """Athan for {} on {}:
+    Fajr: {}
+    Sunrise: {}
+    Dhuhr: {}
+    Asr: {}
+    Maghrib: {}
+    Isha: {}
+    """.format("Toronto, Canada",
+               date_format,
+               timings["Fajr"],
+               timings["Sunrise"],
+               timings["Dhuhr"],
+               timings["Asr"],
+               timings["Maghrib"],
+               timings["Isha"])
     return result
