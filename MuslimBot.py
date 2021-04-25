@@ -1,9 +1,7 @@
 import asyncio
-
 import aiohttp
 import discord
 from discord.ext import commands
-import requests
 from datetime import datetime
 
 bot_description = ""
