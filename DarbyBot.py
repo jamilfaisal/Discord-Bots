@@ -8,4 +8,4 @@ class MyClient(discord.Client):
     async def on_message(self, message):
         if message.author == self.user:
             return
-        print("Message from {}. Says: {}".format(message.author, message.content))
+        await message.channel.send("Message from {}. Says: {}".format(message.author, message.content))
