@@ -20,6 +20,13 @@ async def on_ready():
     print("Logged on as {}".format(MuslimBot.user))
 
 
+@MuslimBot.event
+async def on_guild_join(guild):
+    g_channel = discord.utils.find(lambda x: x.name == 'general', guild.text_channels)
+    if g_channel and g_channel.permissions_for(guild.me).send_messages:
+        await g_channel.send("As-salamu alaykum!")
+
+
 @MuslimBot.command()
 async def athan(ctx: commands.Context, address: str):
     try:
