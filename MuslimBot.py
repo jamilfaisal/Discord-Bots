@@ -7,6 +7,7 @@ from datetime import datetime
 from geopy.adapters import AioHTTPAdapter
 from geopy.geocoders import Nominatim
 from countryinfo import CountryInfo
+from bs4 import BeautifulSoup
 
 
 bot_description = ""
@@ -41,6 +42,20 @@ async def athan(ctx: commands.Context, address: str):
             print(e)
             continue
         break
+    await session.close()
+
+
+@MuslimBot.command()
+async def hadith(ctx: commands.Context, language: str = "eng"):
+    url = "https://api.sunnah.com/v1/hadiths/random"
+    headers = {
+        'x-api-key': "SqD712P3E82xnwOAEOkGd5JZH8s9wRR24TqNFzjk"
+    }
+    session = aiohttp.ClientSession()
+    async with session.get(url, headers=headers) as r:
+        if r.status == 200:
+            js = await r.json()
+            await ctx.send(format_hadith(js, language))
     await session.close()
 
 
@@ -89,3 +104,16 @@ def format_athan(json, city, country):
                timings["Maghrib"],
                timings["Isha"])
     return result
+
+
+def format_hadith(json, lang):
+    eng_soup = BeautifulSoup(json['hadith'][0]['body'], features="html.parser")
+    eng = eng_soup.get_text('\n')[:-2]
+    if lang == "eng":
+        return eng
+    ara_soup = BeautifulSoup(json['hadith'][1]['body'], features="html.parser")
+    ara = ara_soup.get_text('\n')
+    if lang == "ara":
+        return ara
+    if lang == "both":
+        return "English:\n{}\n\nArabic:\n{}".format(eng, ara)
